@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,20 +28,43 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
+
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
-                if (id==R.id.Home){
-                    LoadFrag(new HomeFragment(),true);
-                } else if (id==R.id.Notification) {
-                    LoadFrag(new NotificationFragment(),false);
+
+                if (id == R.id.Home) {
+                    LoadFrag(new HomeFragment(), true);
+                } else if (id == R.id.Notification) {
+                    LoadFrag(new NotificationFragment(), false);
                 } else {
-                    LoadFrag(new ServiceFragment(),false);
+                    LoadFrag(new ServiceFragment(), false);
                 }
+
+
                 return true;
             }
         });
         BottomNav.setSelectedItemId(R.id.Home);
     }
+
+    @Override
+    public void onBackPressed() {
+        // Handle the back press event
+        int selectedItemId = BottomNav.getSelectedItemId();
+
+        if (selectedItemId == R.id.Home) {
+            // If already on the Home fragment, close the activity
+            finish();
+        } else if (selectedItemId == R.id.Notification) {
+            BottomNav.setSelectedItemId(R.id.Home);
+        } else if (selectedItemId == R.id.Service) {
+            BottomNav.setSelectedItemId(R.id.Notification);
+        } else {
+            // Default behavior for unknown fragments
+            super.onBackPressed();
+        }
+    }
+
 
     public void LoadFrag(Fragment fragment,boolean flag){
         FragmentManager FragManag = getSupportFragmentManager();
@@ -51,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
             FragTrans.replace(R.id.container,fragment);
             FragTrans.addToBackStack(null);
         }
+
         FragTrans.commit();
     }
+
+
 }
